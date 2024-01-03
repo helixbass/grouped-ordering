@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, hash};
 
-pub use proc_macros::grouped_ordering;
+pub use grouped_ordering_proc_macros::grouped_ordering;
 
 pub trait GroupedOrdering {
     type Group: hash::Hash + Eq;
@@ -42,7 +42,7 @@ mod tests {
     use speculoos::prelude::*;
 
     use super::*;
-    use proc_macros::grouped_ordering_crate_internal as grouped_ordering;
+    use grouped_ordering_proc_macros::grouped_ordering_crate_internal as grouped_ordering;
 
     #[test]
     fn test_manual_impl_vec_sort() {
@@ -203,5 +203,27 @@ mod tests {
             r#"["a", "b", "b"]"#
         ))
         .is_err();
+    }
+
+    #[test]
+    fn test_instantiate_macro() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        impl GroupedOrderable<GroupedOrderingFoo> for u32 {
+            fn map_to_grouped_ordering(&self) -> GroupedOrderingFooGroup {
+                match self % 3 {
+                    0 => GroupedOrderingFooGroup::A,
+                    1 => GroupedOrderingFooGroup::B,
+                    2 => GroupedOrderingFooGroup::C,
+                    _ => unreachable!(),
+                }
+            }
+        }
+
+        let grouped_ordering = grouped_ordering_foo![A, B, C];
+
+        let mut nums: Vec<u32> = vec![0, 1, 2, 3, 4, 5];
+        nums.sort_by_grouped_ordering(&grouped_ordering);
+        assert_that!(&nums).is_equal_to(vec![0, 3, 1, 4, 2, 5]);
     }
 }
