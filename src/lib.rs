@@ -169,7 +169,8 @@ mod tests {
     fn test_deserialize() {
         grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
 
-        let grouped_ordering: GroupedOrderingFoo = serde_json::from_str(r#"["b", "a", "c"]"#).unwrap();
+        let grouped_ordering: GroupedOrderingFoo =
+            serde_json::from_str(r#"["b", "a", "c"]"#).unwrap();
 
         impl GroupedOrderable<GroupedOrderingFoo> for u32 {
             fn map_to_grouped_ordering(&self) -> GroupedOrderingFooGroup {
@@ -191,17 +192,16 @@ mod tests {
     fn test_deserialize_from_incomplete_list_fails() {
         grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
 
-        assert_that!(
-            &serde_json::from_str::<GroupedOrderingFoo>(r#"["a", "b"]"#)
-        ).is_err();
+        assert_that!(&serde_json::from_str::<GroupedOrderingFoo>(r#"["a", "b"]"#)).is_err();
     }
 
     #[test]
     fn test_deserialize_from_list_with_duplicates_fails() {
         grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
 
-        assert_that!(
-            &serde_json::from_str::<GroupedOrderingFoo>(r#"["a", "b", "b"]"#)
-        ).is_err();
+        assert_that!(&serde_json::from_str::<GroupedOrderingFoo>(
+            r#"["a", "b", "b"]"#
+        ))
+        .is_err();
     }
 }
