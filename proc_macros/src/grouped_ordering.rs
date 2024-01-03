@@ -99,7 +99,7 @@ fn get_impl_grouped_ordering(grouped_ordering_spec: &GroupedOrderingSpec, group_
                 &self,
                 a: &#group_enum_name,
                 b: &#group_enum_name,
-            ) -> Ordering {
+            ) -> std::cmp::Ordering {
                 self.index_lookup[a].cmp(&self.index_lookup[b])
             }
         }
