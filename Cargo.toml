@@ -10,3 +10,5 @@ proc_macros = { package = "grouped_ordering_proc_macros", path = "proc_macros", 
 
 [dev-dependencies]
 speculoos = "0.11.0"
+serde = { version = "1.0", features = ["default", "derive"] }
+serde_json = "1.0.110"

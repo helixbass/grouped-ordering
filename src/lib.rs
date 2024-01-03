@@ -165,9 +165,27 @@ mod tests {
         .is_err();
     }
 
-    // #[test]
-    // fn test_deserialize() {
-    // }
+    #[test]
+    fn test_deserialize() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        let grouped_ordering: GroupedOrderingFoo = serde_json::from_str(r#"["b", "a", "c"]"#).unwrap();
+
+        impl GroupedOrderable<GroupedOrderingFoo> for u32 {
+            fn map_to_grouped_ordering(&self) -> GroupedOrderingFooGroup {
+                match self % 3 {
+                    0 => GroupedOrderingFooGroup::A,
+                    1 => GroupedOrderingFooGroup::B,
+                    2 => GroupedOrderingFooGroup::C,
+                    _ => unreachable!(),
+                }
+            }
+        }
+
+        let mut nums: Vec<u32> = vec![0, 1, 2, 3, 4, 5];
+        nums.sort_by_grouped_ordering(&grouped_ordering);
+        assert_that!(&nums).is_equal_to(vec![1, 4, 0, 3, 2, 5]);
+    }
 
     // #[test]
     // fn test_deserialize_from_incomplete_list_fails() {

@@ -52,6 +52,7 @@ fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> Toke
     let impl_grouped_ordering = get_impl_grouped_ordering(&grouped_ordering_spec, &group_enum_name, &crate_name);
     let impl_try_from = get_impl_try_from(&grouped_ordering_spec, &group_enum_name);
     let impl_default = get_impl_default(&grouped_ordering_spec, &group_enum_name);
+    let impl_deserialize = get_impl_deserialize(&grouped_ordering_spec, &group_enum_name);
 
     quote! {
         #group_enum_definition
@@ -63,6 +64,8 @@ fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> Toke
         #impl_try_from
 
         #impl_default
+
+        #impl_deserialize
     }.into()
 }
 
@@ -70,7 +73,8 @@ fn get_group_enum_definition(grouped_ordering_spec: &GroupedOrderingSpec, group_
     let groups = &grouped_ordering_spec.groups;
 
     quote! {
-        #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+        #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, serde::Deserialize)]
+        #[serde(rename_all = "kebab-case")]
         enum #group_enum_name {
             #(#groups),*
         }
@@ -146,6 +150,24 @@ fn get_impl_default(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name
         impl Default for #name {
             fn default() -> Self {
                 Self::try_from([#(#qualified_groups),*]).unwrap()
+            }
+        }
+    }
+}
+
+fn get_impl_deserialize(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name: &Ident) -> proc_macro2::TokenStream {
+    let name = &grouped_ordering_spec.name;
+    let num_groups = grouped_ordering_spec.groups.len();
+
+    quote! {
+        impl<'de> serde::Deserialize<'de> for #name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                let array = <[#group_enum_name; #num_groups] as serde::Deserialize>::deserialize(deserializer)?;
+                use serde::de::Error;
+                Self::try_from(array).map_err(|_| D::Error::custom("Expected all variants"))
             }
         }
     }
