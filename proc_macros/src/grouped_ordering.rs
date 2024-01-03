@@ -1,3 +1,4 @@
+use inflector::Inflector;
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use syn::{
@@ -43,6 +44,7 @@ pub fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> 
     let impl_try_from = get_impl_try_from(&grouped_ordering_spec, &group_enum_name);
     let impl_default = get_impl_default(&grouped_ordering_spec, &group_enum_name);
     let impl_deserialize = get_impl_deserialize(&grouped_ordering_spec, &group_enum_name);
+    let instantiate_macro_definition = get_instantiate_macro_definition(&grouped_ordering_spec, &group_enum_name);
 
     quote! {
         #group_enum_definition
@@ -56,6 +58,8 @@ pub fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> 
         #impl_default
 
         #impl_deserialize
+
+        #instantiate_macro_definition
     }.into()
 }
 
@@ -158,6 +162,23 @@ fn get_impl_deserialize(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_
                 let array = <[#group_enum_name; #num_groups] as serde::Deserialize>::deserialize(deserializer)?;
                 use serde::de::Error;
                 Self::try_from(array).map_err(|_| D::Error::custom("Expected all variants"))
+            }
+        }
+    }
+}
+
+fn get_instantiate_macro_definition(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name: &Ident) -> proc_macro2::TokenStream {
+    let macro_name = format_ident!("{}", grouped_ordering_spec.name.to_string().to_snake_case());
+    let name = &grouped_ordering_spec.name;
+
+    quote! {
+        macro_rules! #macro_name {
+            ($($group:ident),* $(,)?) => {
+                grouped_ordering_proc_macros::grouped_ordering_instance!(
+                    #name,
+                    #group_enum_name,
+                    [$($group),*]
+                )
             }
         }
     }
