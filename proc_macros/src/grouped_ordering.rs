@@ -45,6 +45,7 @@ pub fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> 
     let impl_default = get_impl_default(&grouped_ordering_spec, &group_enum_name);
     let impl_deserialize = get_impl_deserialize(&grouped_ordering_spec, &group_enum_name);
     let impl_index_by_group = get_impl_index_by_group(&grouped_ordering_spec, &group_enum_name);
+    let impl_index_by_usize = get_impl_index_by_usize(&grouped_ordering_spec, &group_enum_name);
     let instantiate_macro_definition = get_instantiate_macro_definition(&grouped_ordering_spec, &group_enum_name);
 
     quote! {
@@ -61,6 +62,8 @@ pub fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> 
         #impl_deserialize
 
         #impl_index_by_group
+
+        #impl_index_by_usize
 
         #instantiate_macro_definition
     }.into()
@@ -197,6 +200,20 @@ fn get_impl_index_by_group(grouped_ordering_spec: &GroupedOrderingSpec, group_en
 
             fn index(&self, value: #group_enum_name) -> &Self::Output {
                 &self.index_lookup[&value]
+            }
+        }
+    }
+}
+
+fn get_impl_index_by_usize(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name: &Ident) -> proc_macro2::TokenStream {
+    let name = &grouped_ordering_spec.name;
+
+    quote! {
+        impl std::ops::Index<usize> for #name {
+            type Output = #group_enum_name;
+
+            fn index(&self, value: usize) -> &Self::Output {
+                &self.groups[value]
             }
         }
     }

@@ -235,4 +235,13 @@ mod tests {
 
         assert_that!(&grouped_ordering[GroupedOrderingFooGroup::A]).is_equal_to(1);
     }
+
+    #[test]
+    fn test_index_by_usize() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        let grouped_ordering = grouped_ordering_foo![C, A, B];
+
+        assert_that!(&grouped_ordering[0]).is_equal_to(GroupedOrderingFooGroup::C);
+    }
 }
