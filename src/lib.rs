@@ -204,4 +204,51 @@ mod tests {
         ))
         .is_err();
     }
+
+    // #[test]
+    // fn test_instantiate_macro_manual() {
+    //     grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+    //     impl GroupedOrderable<GroupedOrderingFoo> for u32 {
+    //         fn map_to_grouped_ordering(&self) -> GroupedOrderingFooGroup {
+    //             match self % 3 {
+    //                 0 => GroupedOrderingFooGroup::A,
+    //                 1 => GroupedOrderingFooGroup::B,
+    //                 2 => GroupedOrderingFooGroup::C,
+    //                 _ => unreachable!(),
+    //             }
+    //         }
+    //     }
+
+    //     macro_rules! grouped_ordering_foo {
+    //         ()
+    //     }
+    //     let grouped_ordering = grouped_ordering_foo![A, B, C];
+
+    //     let mut nums: Vec<u32> = vec![0, 1, 2, 3, 4, 5];
+    //     nums.sort_by_grouped_ordering(&grouped_ordering);
+    //     assert_that!(&nums).is_equal_to(vec![0, 3, 1, 4, 2, 5]);
+    // }
+
+    // #[test]
+    // fn test_instantiate_macro() {
+    //     grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+    //     impl GroupedOrderable<GroupedOrderingFoo> for u32 {
+    //         fn map_to_grouped_ordering(&self) -> GroupedOrderingFooGroup {
+    //             match self % 3 {
+    //                 0 => GroupedOrderingFooGroup::A,
+    //                 1 => GroupedOrderingFooGroup::B,
+    //                 2 => GroupedOrderingFooGroup::C,
+    //                 _ => unreachable!(),
+    //             }
+    //         }
+    //     }
+
+    //     let grouped_ordering = grouped_ordering_foo![A, B, C];
+
+    //     let mut nums: Vec<u32> = vec![0, 1, 2, 3, 4, 5];
+    //     nums.sort_by_grouped_ordering(&grouped_ordering);
+    //     assert_that!(&nums).is_equal_to(vec![0, 3, 1, 4, 2, 5]);
+    // }
 }
