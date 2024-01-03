@@ -226,4 +226,13 @@ mod tests {
         nums.sort_by_grouped_ordering(&grouped_ordering);
         assert_that!(&nums).is_equal_to(vec![0, 3, 1, 4, 2, 5]);
     }
+
+    #[test]
+    fn test_index_by_group() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        let grouped_ordering = grouped_ordering_foo![C, A, B];
+
+        assert_that!(&grouped_ordering[GroupedOrderingFooGroup::A]).is_equal_to(1);
+    }
 }
