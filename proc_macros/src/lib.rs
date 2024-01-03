@@ -51,6 +51,7 @@ fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> Toke
     let grouped_ordering_struct_definition = get_grouped_ordering_struct_definition(&grouped_ordering_spec, &group_enum_name);
     let impl_grouped_ordering = get_impl_grouped_ordering(&grouped_ordering_spec, &group_enum_name, &crate_name);
     let impl_try_from = get_impl_try_from(&grouped_ordering_spec, &group_enum_name);
+    let impl_default = get_impl_default(&grouped_ordering_spec, &group_enum_name);
 
     quote! {
         #group_enum_definition
@@ -60,6 +61,8 @@ fn grouped_ordering_for_crate_name(input: TokenStream, crate_name: &str) -> Toke
         #impl_grouped_ordering
 
         #impl_try_from
+
+        #impl_default
     }.into()
 }
 
@@ -105,10 +108,11 @@ fn get_impl_grouped_ordering(grouped_ordering_spec: &GroupedOrderingSpec, group_
 }
 
 fn get_impl_try_from(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name: &Ident) -> proc_macro2::TokenStream {
+    let name = &grouped_ordering_spec.name;
     let num_groups = grouped_ordering_spec.groups.len();
 
     quote! {
-        impl TryFrom<[#group_enum_name; #num_groups]> for GroupedOrderingFoo {
+        impl TryFrom<[#group_enum_name; #num_groups]> for #name {
             type Error = String;
 
             fn try_from(groups: [#group_enum_name; #num_groups]) -> Result<Self, Self::Error> {
@@ -124,6 +128,23 @@ fn get_impl_try_from(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_nam
                     groups,
                     index_lookup,
                 })
+            }
+        }
+    }
+}
+
+fn get_impl_default(grouped_ordering_spec: &GroupedOrderingSpec, group_enum_name: &Ident) -> proc_macro2::TokenStream {
+    let name = &grouped_ordering_spec.name;
+    let qualified_groups = grouped_ordering_spec.groups.iter().map(|group| {
+        quote! {
+            #group_enum_name::#group
+        }
+    }).collect::<Vec<_>>();
+
+    quote! {
+        impl Default for #name {
+            fn default() -> Self {
+                Self::try_from([#(#qualified_groups),*]).unwrap()
             }
         }
     }

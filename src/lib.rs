@@ -142,9 +142,16 @@ mod tests {
         assert_that!(&nums).is_equal_to(vec![0, 3, 1, 4, 2, 5]);
     }
 
-    // #[test]
-    // fn test_default() {
-    // }
+    #[test]
+    fn test_default() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        assert_that!(GroupedOrderingFoo::default().groups).is_equal_to([
+            GroupedOrderingFooGroup::A,
+            GroupedOrderingFooGroup::B,
+            GroupedOrderingFooGroup::C,
+        ]);
+    }
 
     // #[test]
     // fn test_try_into_from_incomplete_list_fails() {
