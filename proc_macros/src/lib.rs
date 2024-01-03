@@ -82,8 +82,9 @@ fn get_grouped_ordering_struct_definition(grouped_ordering_spec: &GroupedOrderin
     let num_groups = grouped_ordering_spec.groups.len();
 
     quote! {
+        #[derive(Debug)]
         struct #name {
-            groups: [#group_enum_name; #num_groups],
+            pub groups: [#group_enum_name; #num_groups],
             index_lookup: std::collections::HashMap<#group_enum_name, usize>,
         }
     }

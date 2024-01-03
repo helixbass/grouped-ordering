@@ -39,7 +39,7 @@ impl<T> VecExt for Vec<T> {
 mod tests {
     use std::collections::HashMap;
 
-    use speculoos::assert_that;
+    use speculoos::prelude::*;
 
     use super::*;
     use proc_macros::grouped_ordering_crate_internal as grouped_ordering;
@@ -153,13 +153,17 @@ mod tests {
         ]);
     }
 
-    // #[test]
-    // fn test_try_into_from_incomplete_list_fails() {
-    // }
+    #[test]
+    fn test_try_into_from_list_with_duplicates_fails() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
 
-    // #[test]
-    // fn test_try_into_from_list_with_duplicates_fails() {
-    // }
+        assert_that!(GroupedOrderingFoo::try_from([
+            GroupedOrderingFooGroup::A,
+            GroupedOrderingFooGroup::B,
+            GroupedOrderingFooGroup::B,
+        ]))
+        .is_err();
+    }
 
     // #[test]
     // fn test_deserialize() {
