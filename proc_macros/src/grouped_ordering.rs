@@ -172,6 +172,7 @@ fn get_instantiate_macro_definition(grouped_ordering_spec: &GroupedOrderingSpec,
     let name = &grouped_ordering_spec.name;
 
     quote! {
+        #[allow(unused_macros)]
         macro_rules! #macro_name {
             ($($group:ident),* $(,)?) => {
                 grouped_ordering_proc_macros::grouped_ordering_instance!(
