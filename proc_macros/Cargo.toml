@@ -1,0 +1,22 @@
+[package]
+name = "grouped_ordering_proc_macros"
+version = "0.1.0"
+edition = "2021"
+license = "Unlicense OR MIT"
+authors = [
+  "Julian Rosse <julian@helixbass.net>",
+]
+description = """
+(proc-macros used internally by grouped-ordering)
+"""
+homepage = "https://github.com/helixbass/grouped-ordering"
+repository = "https://github.com/helixbass/grouped-ordering"
+rust-version = "1.70"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.64"
+quote = "1.0.29"
+syn = { version = "2.0.25", features = ["full"] }
