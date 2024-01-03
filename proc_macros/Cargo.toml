@@ -2,7 +2,7 @@
 name = "grouped_ordering_proc_macros"
 version = "0.1.0"
 edition = "2021"
-license = "Unlicense OR MIT"
+license = "MIT"
 authors = [
   "Julian Rosse <julian@helixbass.net>",
 ]
