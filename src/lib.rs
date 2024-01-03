@@ -187,11 +187,21 @@ mod tests {
         assert_that!(&nums).is_equal_to(vec![1, 4, 0, 3, 2, 5]);
     }
 
-    // #[test]
-    // fn test_deserialize_from_incomplete_list_fails() {
-    // }
+    #[test]
+    fn test_deserialize_from_incomplete_list_fails() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
 
-    // #[test]
-    // fn test_deserialize_from_list_with_duplicates_fails() {
-    // }
+        assert_that!(
+            &serde_json::from_str::<GroupedOrderingFoo>(r#"["a", "b"]"#)
+        ).is_err();
+    }
+
+    #[test]
+    fn test_deserialize_from_list_with_duplicates_fails() {
+        grouped_ordering!(GroupedOrderingFoo, [A, B, C]);
+
+        assert_that!(
+            &serde_json::from_str::<GroupedOrderingFoo>(r#"["a", "b", "b"]"#)
+        ).is_err();
+    }
 }
