@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-indexmap = "2.1.0"
 proc_macros = { package = "grouped_ordering_proc_macros", path = "proc_macros", version = "0.1.0" }
 
 [dev-dependencies]
